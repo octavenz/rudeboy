@@ -1,15 +1,15 @@
-const profanity = require('./rude.json');
+const rudeWords = require('./rude.json');
 
-const matchWords = profanity.match.map(normalise);
+const matchWords = rudeWords.match.map(normalise);
 const matchesLength = matchWords.length;
 
-const containWords = profanity.contain.map(normalise);
+const containWords = rudeWords.contain.map(normalise);
 const containsLength = containWords.length;
 
-const whitelist = profanity.whitelist.map(normalise)
+const whitelist = rudeWords.whitelist.map(normalise)
 
  // this will be a bad idea if multi word matches get too large. Try and use singular matches instead.
-const multiWordMatchesExp = new RegExp(profanity.multi.join('|'), 'ig');
+const multiWordMatchesExp = new RegExp(rudeWords.multi.join('|'), 'ig');
 const asianChars = /[\u1100-\u11FF\u2E80-\u2EFF\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\u3130-\u318F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF\uFE30-\uFE4F]/;
 
 const suffixes = ["s", "ing", "ed", "able", "er", "ers", "y", "ey", "eys", "ling", "lings", "ly", "ish",
@@ -17,19 +17,19 @@ const suffixes = ["s", "ing", "ed", "able", "er", "ers", "y", "ey", "eys", "ling
 
 function rude (str, returnWords=false) {
 
-    let profane = false;
+    let _rude = false;
     let restrictedWords = [];
 
     const multiWordMatches = str.match(multiWordMatchesExp);
 
     if (multiWordMatches) {
-        profane = true;
+        _rude = true;
         restrictedWords = restrictedWords.concat(multiWordMatches);
     }
 
     // if no full text matches check all words
-    if(profane === false) {
-        const words = str.split(' ');
+    if(_rude === false) {
+        const words = str.split(' '); // .trim().split(/ +/)
         words.forEach((word) => {
             // remove symbols
             word = normalise(word);
@@ -46,11 +46,11 @@ function rude (str, returnWords=false) {
             for(i=0; i < matchesLength; i++) {
                 // this would be faster to look up as a key in an object literal
                 // but it would negate the ability to check for suffix matches
-                const cussWord = matchWords[i];
+                const rudeWord = matchWords[i];
 
-                if (word === cussWord || word.startsWith(cussWord) && suffixes.indexOf(word.slice(cussWord.length)) > -1) {
+                if (word === rudeWord || word.startsWith(rudeWord) && suffixes.indexOf(word.slice(rudeWord.length)) > -1) {
                     isRude = true;
-                    profane = true;
+                    _rude = true;
                     restrictedWords.push(word)
                     break; // don't search the rest of the black list
                 }
@@ -60,7 +60,7 @@ function rude (str, returnWords=false) {
             if (! isRude) {
                 for(i=0; i < containsLength; i++) {
                     if (word.indexOf(normalise(containWords[i])) > -1 ) {
-                        profane = true;
+                        _rude = true;
                         restrictedWords.push(word)
                         break; // don't search the rest of the black list
                     }
@@ -70,20 +70,20 @@ function rude (str, returnWords=false) {
     }
 
     // if no bad words found check the entire string for spaced out swears or seperated by non digit chars
-    if(profane === false) {
+    if(_rude === false) {
         const multipleSingleLetterWords = /(\b[\w\d][^\w\d]\b){2,}./g;
         const matches = str.match(multipleSingleLetterWords);
         if (matches !== null) {
             matches.forEach(match => {
                 if (rude(match.replace(/[^\w\d]/g, ''))) {
-                    profane = true;
+                    _rude = true;
                     restrictedWords.push(match);
                 }
             });
         }
     }
 
-    return returnWords ? { profane: profane, words: restrictedWords.filter(unique) } : profane;
+    return returnWords ? { rude: _rude, words: restrictedWords.filter(unique) } : _rude;
 }
 
 function unique(value, index, self) {

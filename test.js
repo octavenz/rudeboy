@@ -19,24 +19,26 @@ const goodExamples = [
   "The assinine assassin is ok",
 ];
 
+console.log(rude("you a egg f-u-c-k"));
+
 
 describe('rude', () => {
 
     it('finds bad words', () => {
-        naughtyExamples.forEach(it => {
-            expect(rude(it)).to.be.true;
+        naughtyExamples.forEach(word => {
+            expect(rude(word), word).to.be.true;
         })
     });
 
     it('returns false when no bad words found', () => {
-        goodExamples.forEach(it => {
-            expect(rude(it)).to.be.false;
+        goodExamples.forEach(word => {
+            expect(rude(word)).to.be.false;
         })
     })
 
     it('returns a detailed object when parameter 2 is true', () => {
-        naughtyExamples.forEach(it => {
-            expect(rude(it, true)).to.be.have.keys(['profane', 'words']);
+        naughtyExamples.forEach(word => {
+            expect(rude(word, true)).to.be.have.keys(['rude', 'words']);
         })
     })
 

@@ -7,6 +7,9 @@ Simple, syncronous bad language identifier for profanity invalidation.
 var rude = require('rudeboy');
 rude('f**k') // true
 
+var returnObject = true
+rude('f**k', returnObject) // {rude: true, words: ['f**k']}
+
 ```
 See test.js for more examples
 
