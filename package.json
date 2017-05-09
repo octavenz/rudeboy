@@ -1,0 +1,15 @@
+{
+  "name": "rudeboy",
+  "version": "0.1.0",
+  "description": "A syncronous profanity filter.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "author": "Pat Ho <p@pho.sx> (https://pho.sx)",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0"
+  }
+}
