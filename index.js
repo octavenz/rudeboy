@@ -15,11 +15,16 @@ const asianChars = /[\u1100-\u11FF\u2E80-\u2EFF\u3000-\u303F\u3040-\u309F\u30A0-
 const suffixes = ["s", "ing", "ed", "able", "er", "ers", "y", "ey", "eys", "ling", "lings", "ly", "ish",
                   "aholic", "aholics", "ful", "less", "oid", "ology", "ous", "uous" ]; // ies
 
-function rude (str, returnWords=false) {
+function rude (inputStr, returnWords=false) {
+
+    if (typeof inputStr !== 'string') {
+        throw "Input string is not a string";
+    }
 
     let _rude = false;
     let restrictedWords = [];
 
+    const str = inputStr.replace(/  +/g,' '); // make multiple spaces into single
     const multiWordMatches = str.match(multiWordMatchesExp);
 
     if (multiWordMatches) {
@@ -32,6 +37,19 @@ function rude (str, returnWords=false) {
         const words = str.split(' '); // .trim().split(/ +/)
         words.forEach((word) => {
             // remove symbols
+
+            // if it looks like an email address split it
+            if(/\b[^ @]+@[^ @\.]+\.[^ ]{2,10}\b/i.test(word)) {
+                const emailWords = word.split(/(@|\.)/);
+                emailWords.forEach(w => {
+                if (w.length > 2 && rude(w)) {
+                        _rude = true;
+                        restrictedWords.push(w);
+                    }
+                });
+                return;
+            }
+
             word = normalise(word);
 
             if (whitelist.indexOf(word) > -1) return;
@@ -61,7 +79,7 @@ function rude (str, returnWords=false) {
                 for(i=0; i < containsLength; i++) {
                     if (word.indexOf(normalise(containWords[i])) > -1 ) {
                         _rude = true;
-                        restrictedWords.push(word)
+                        restrictedWords.push(word);
                         break; // don't search the rest of the black list
                     }
                 }
