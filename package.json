@@ -1,10 +1,17 @@
 {
   "name": "rudeboy",
-  "version": "0.2.5",
-  "description": "A syncronous profanity filter.",
+  "version": "0.2.6",
+  "description": "A simple, syncronous profanity filter for bad language validation.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pjho/rudeboy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pjho/rudeboy/issues"
   },
   "author": "Pat Ho <p@pho.sx> (https://pho.sx)",
   "license": "ISC",
