@@ -6,11 +6,7 @@ const rude = require('./index');
 const naughtyExamples = [
   "you a egg f-u-c-k",
   "bitchaleedoodle",
-  "fück you you fucking fucker",
-  "something something blow job butt plug",
-  "Donald is a master of bumology",
-  "a big f u c k y o u. i hate you. s h i t",
-  "fuck@yourfuckershitbitch.com"
+  "Donald is a master of bumology"
 ];
 
 const goodExamples = [
@@ -18,7 +14,6 @@ const goodExamples = [
   "Everything is wonderful",
   "The assinine assassin is ok",
 ];
-
 
 describe('rude', () => {
 
@@ -40,5 +35,35 @@ describe('rude', () => {
         })
     })
 
+    it('finds spaced out words', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("a big f u c k y o u. i hate you. s h i t")).to.be.true;
+        })
+    })
+
+    it('breaks email addresses into component parts', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("fuck@yourfuckershitbitch.com", true).words.list).to.contain('fuck', 'shit', 'bitch');
+        })
+    })
+
+    it('Picks up accented chars without having to add them to the blacklist', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("fück")).to.be.true;
+        })
+    })
+
+    it('Picks up common word endings for match words without adding them to the blacklist', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("Dicky dicker dicked", true).words.input).to.contain('dicky', 'dicker', 'dicked')
+        })
+    })
+
+    it('Multi word matches are found', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("something something blow job butt plug")).to.be.true;
+        })
+    })
 })
+
 
