@@ -59,6 +59,13 @@ describe('rude', () => {
         })
     })
 
+    it('Words passed to the extra whitelist are ignored', () => {
+        naughtyExamples.forEach(word => {
+            expect(rude("Dong Wang is a great guy!"), 'words in default rude list').to.be.true;
+            expect(rude("Dong Wang is a great guy!", false, ['dong', 'wang']), 'words added to function whitelist').to.be.false;
+        })
+    })
+
     it('Multi word matches are found', () => {
         naughtyExamples.forEach(word => {
             expect(rude("something something blow job butt plug")).to.be.true;

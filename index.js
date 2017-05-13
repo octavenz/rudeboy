@@ -15,7 +15,7 @@ const asianChars = /[\u1100-\u11FF\u2E80-\u2EFF\u3000-\u303F\u3040-\u309F\u30A0-
 const suffixes = ["s", "ing", "ed", "able", "er", "ers", "y", "ey", "eys", "ling", "lings", "ly", "ish",
                   "aholic", "aholics", "ful", "less", "oid", "ology", "ous", "uous" ]; // ies
 
-function rude (inputStr, returnWords=false) {
+function rude (inputStr, returnWords=false, extraWhitelist=[]) {
 
     if (typeof inputStr !== 'string') {
         throw "Input string is not a string";
@@ -24,10 +24,15 @@ function rude (inputStr, returnWords=false) {
     let _rude = false; // this var holds the final determinant for if the string is rude
     let inputRudeWords = [];
     let listRudeWords = [];
-
     const str = inputStr.replace(/  +/g,' '); // make multiple spaces into single
-    const multiWordMatches = str.match(multiWordMatchesExp);
 
+    if (Array.isArray(extraWhitelist)) {
+        extraWhitelist = extraWhitelist.map(normalise)
+    } else {
+        throw "ExtraWhiteList must be an array."
+    }
+
+    const multiWordMatches = str.match(multiWordMatchesExp);
     if (multiWordMatches) {
         _rude = true;
         inputRudeWords = inputRudeWords.concat(multiWordMatches);
@@ -36,9 +41,8 @@ function rude (inputStr, returnWords=false) {
 
     // if no full text matches check all words
     if(_rude === false) {
-        const words = str.split(' '); // .trim().split(/ +/)
+        const words = str.split(' ');
         words.forEach((word) => {
-            // remove symbols
 
             // if it looks like an email address split it
             if(/\b[^ @]+@[^ @\.]+\.[^ ]{2,10}\b/i.test(word)) {
@@ -58,7 +62,9 @@ function rude (inputStr, returnWords=false) {
 
             word = normalise(word);
 
-            if (whitelist.indexOf(word) > -1) return;
+
+            if (extraWhitelist.indexOf(word) > -1) return false;
+            if (whitelist.indexOf(word) > -1) return false;
 
             // ignore short words unless they're asian.
             if (word.length < 3 && asianChars.test(word) == false) {
