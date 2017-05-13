@@ -21,15 +21,17 @@ function rude (inputStr, returnWords=false) {
         throw "Input string is not a string";
     }
 
-    let _rude = false;
-    let restrictedWords = [];
+    let _rude = false; // this var holds the final determinant for if the string is rude
+    let inputRudeWords = [];
+    let listRudeWords = [];
 
     const str = inputStr.replace(/  +/g,' '); // make multiple spaces into single
     const multiWordMatches = str.match(multiWordMatchesExp);
 
     if (multiWordMatches) {
         _rude = true;
-        restrictedWords = restrictedWords.concat(multiWordMatches);
+        inputRudeWords = inputRudeWords.concat(multiWordMatches);
+        listRudeWords  = listRudeWords.concat(multiWordMatches);
     }
 
     // if no full text matches check all words
@@ -42,9 +44,13 @@ function rude (inputStr, returnWords=false) {
             if(/\b[^ @]+@[^ @\.]+\.[^ ]{2,10}\b/i.test(word)) {
                 const emailWords = word.split(/(@|\.)/);
                 emailWords.forEach(w => {
-                if (w.length > 2 && rude(w)) {
-                        _rude = true;
-                        restrictedWords.push(w);
+                    if (w.length > 2) {
+                        let r = rude(w, true);
+                        if (r.rude) {
+                            _rude = true;
+                            inputRudeWords.push(w);
+                            listRudeWords  = listRudeWords.concat(r.words.list);
+                        }
                     }
                 });
                 return;
@@ -59,8 +65,9 @@ function rude (inputStr, returnWords=false) {
                 return
             }
 
-            let isRude = false;
+            let isRude = false; // this I dont even know if i need ths
 
+            // Look for exact matches or matches with suffix
             for(i=0; i < matchesLength; i++) {
                 // this would be faster to look up as a key in an object literal
                 // but it would negate the ability to check for suffix matches
@@ -69,17 +76,19 @@ function rude (inputStr, returnWords=false) {
                 if (word === rudeWord || word.startsWith(rudeWord) && suffixes.indexOf(word.slice(rudeWord.length)) > -1) {
                     isRude = true;
                     _rude = true;
-                    restrictedWords.push(word)
-                    break; // don't search the rest of the black list
+                    inputRudeWords.push(word)
+                    listRudeWords.push(rudeWord)
+                    break; // don't search the rest of the black list after a match is found
                 }
             }
 
-             // only check for contains match if we don't already hae an exact match
+             // only check for contains match if we don't already have an exact match
             if (! isRude) {
                 for(i=0; i < containsLength; i++) {
                     if (word.indexOf(normalise(containWords[i])) > -1 ) {
                         _rude = true;
-                        restrictedWords.push(word);
+                        inputRudeWords.push(word)
+                        listRudeWords.push(containWords[i])
                         break; // don't search the rest of the black list
                     }
                 }
@@ -93,15 +102,22 @@ function rude (inputStr, returnWords=false) {
         const matches = str.match(multipleSingleLetterWords);
         if (matches !== null) {
             matches.forEach(match => {
-                if (rude(match.replace(/[^\w\d]/g, ''))) {
+                let r = rude(match.replace(/[^\w\d]/g, ''), true);
+                if (r.rude) {
                     _rude = true;
-                    restrictedWords.push(match);
+                    inputRudeWords.push(match);
+                    listRudeWords = listRudeWords.concat(r.words.list);
                 }
             });
         }
     }
 
-    return returnWords ? { rude: _rude, words: restrictedWords.filter(unique) } : _rude;
+    let wordsObj = {
+      list: listRudeWords.filter(unique),
+      input: inputRudeWords.filter(unique)
+    };
+
+    return returnWords ? {rude: _rude, words: wordsObj } : _rude;
 }
 
 function unique(value, index, self) {

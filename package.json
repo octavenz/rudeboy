@@ -1,6 +1,6 @@
 {
   "name": "rudeboy",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "A simple, syncronous profanity filter for bad language validation.",
   "main": "index.js",
   "scripts": {

@@ -9,17 +9,15 @@ const naughtyExamples = [
   "fück you you fucking fucker",
   "something something blow job butt plug",
   "Donald is a master of bumology",
-  "a big f u c k y o u. i hate you. s h i t"
+  "a big f u c k y o u. i hate you. s h i t",
+  "fuck@yourfuckershitbitch.com"
 ];
-
 
 const goodExamples = [
   "i am so happy",
   "Everything is wonderful",
   "The assinine assassin is ok",
 ];
-
-console.log(rude("you a egg f-u-c-k"));
 
 
 describe('rude', () => {
