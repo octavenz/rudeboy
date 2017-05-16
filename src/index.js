@@ -74,7 +74,7 @@ function rude (inputStr, returnWords=false, extraWhitelist=[]) {
             let isRude = false; // this I dont even know if i need ths
 
             // Look for exact matches or matches with suffix
-            for(i=0; i < matchesLength; i++) {
+            for(let i = 0; i < matchesLength; i++) {
                 // this would be faster to look up as a key in an object literal
                 // but it would negate the ability to check for suffix matches
                 const rudeWord = matchWords[i];
@@ -90,7 +90,7 @@ function rude (inputStr, returnWords=false, extraWhitelist=[]) {
 
              // only check for contains match if we don't already have an exact match
             if (! isRude) {
-                for(i=0; i < containsLength; i++) {
+                for(let i = 0; i < containsLength; i++) {
                     if (word.indexOf(normalise(containWords[i])) > -1 ) {
                         _rude = true;
                         inputRudeWords.push(word)

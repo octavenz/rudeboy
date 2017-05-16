@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const rude = require('./index');
+const rude = require('../dist/index');
 
 const naughtyExamples = [
   "you a egg f-u-c-k",
