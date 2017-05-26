@@ -1,3 +1,4 @@
+const removeDiacritics = require('diacritics').remove;
 const rudeWords = require('./rude.json');
 
 const matchWords = rudeWords.match.map(normalise);
@@ -131,8 +132,8 @@ function unique(value, index, self) {
 }
 
 function normalise(word) {
-    return word.normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, "") // remove unicode
+    word = word.normalize ? word.normalize('NFD') : removeDiacritics(word);
+    return word.replace(/[\u0300-\u036f]/g, "") // remove unicode
         .replace(/[^\w\d\s]/g, "") // remove punctuation
         .replace(/(.)\1{2,}/g, "$1$1")// replace three or more consecutive chars with 2
         .toLowerCase();

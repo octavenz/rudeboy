@@ -1,6 +1,6 @@
 {
   "name": "rudeboy",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A simple, syncronous profanity filter for bad language validation.",
   "main": "dist/index.js",
   "module": "src/index.js",
@@ -25,5 +25,8 @@
     "chai": "^3.5.0",
     "mocha": "^3.3.0",
     "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "diacritics": "^1.3.0"
   }
 }
